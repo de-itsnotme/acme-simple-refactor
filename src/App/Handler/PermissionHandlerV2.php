@@ -6,9 +6,9 @@ namespace App\Handler;
 
 use App\Evaluator\PermissionEvaluator;
 use App\Evaluator\PermissionEvaluatorInterface;
+use App\Exception\InvalidTokenException;
 use App\Factory\TokenFactory;
 use App\Factory\TokenFactoryInterface;
-use InvalidArgumentException;
 use ProgPhil1337\SimpleReactApp\HTTP\Response\JSONResponse;
 use ProgPhil1337\SimpleReactApp\HTTP\Response\ResponseInterface;
 use ProgPhil1337\SimpleReactApp\HTTP\Routing\Attribute\Route;
@@ -16,6 +16,7 @@ use ProgPhil1337\SimpleReactApp\HTTP\Routing\Handler\HandlerInterface;
 use ProgPhil1337\SimpleReactApp\HTTP\Routing\HttpMethod;
 use ProgPhil1337\SimpleReactApp\HTTP\Routing\RouteParameters;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 #[Route(httpMethod: HttpMethod::GET, uri: '/v2/has_permission/{token}')]
 class PermissionHandlerV2 implements HandlerInterface
@@ -40,22 +41,14 @@ class PermissionHandlerV2 implements HandlerInterface
 
     public function __invoke(ServerRequestInterface $serverRequest, RouteParameters $parameters): ResponseInterface
     {
-        /** @var string $tokenId */
-        $tokenId = $parameters->get('token');
-
         try {
+            /** @var string $tokenId */
+            $tokenId = $parameters->get('token');
             $token = $this->tokenFactory->createTokenById($tokenId);
-        } catch (InvalidArgumentException $e) {
-            return new JSONResponse(
-                [
-                    'permission' => false,
-                    'error' => 'Invalid token was provided.',
-                ],
-                400
-            );
+            $hasPermission = $this->permissionEvaluator->hasPermission($token);
+        } catch (Throwable $exception) {
+            return $this->handleException($exception);
         }
-
-        $hasPermission = $this->permissionEvaluator->hasPermission($token);
 
         if ($hasPermission) {
             return new JSONResponse(
@@ -69,9 +62,32 @@ class PermissionHandlerV2 implements HandlerInterface
         return new JSONResponse(
             [
                 'permission' => false,
-                'error' => 'Permission is not allowed.',
+                'error' => 'Permission is not granted.',
             ],
-            400
+            403
+        );
+    }
+
+    private function handleException(Throwable $exception): JSONResponse
+    {
+        if ($exception instanceof InvalidTokenException) {
+            return new JSONResponse(
+                [
+                    'permission' => false,
+                    'error' => 'Invalid token was provided.',
+                ],
+                400
+            );
+        }
+
+        // Log it maybe?
+
+        return new JSONResponse(
+            [
+                'permission' => false,
+                'error' => 'Internal server error.',
+            ],
+            500
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Test\ValueObject;
 
+use App\Exception\InvalidTokenException;
 use App\ValueObject\Token;
 use PHPUnit\Framework\TestCase;
 
@@ -19,17 +20,19 @@ class TokenTest extends TestCase
 
     public function testTokenWithEmptyStringThrowsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidTokenException::class);
 
         $tokenId = '';
+
         new Token($tokenId);
     }
 
     public function testTokenWithInvalidTokenStringThrowsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidTokenException::class);
 
         $tokenId = 'A!B';
+
         new Token($tokenId);
     }
 }

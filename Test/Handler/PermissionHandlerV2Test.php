@@ -40,10 +40,10 @@ class PermissionHandlerV2Test extends TestCase
         $data = json_decode($response->getContent(), true);
 
         $this->assertFalse($data['permission']);
-        $this->assertEquals(400, $response->getCode(), 'Response code should be 400');
+        $this->assertEquals(400, $response->getCode());
     }
 
-    public function testAccessWithValidTokenIdAndNoPermissionShouldReturnPermissionFalseAndStatusCode400()
+    public function testAccessWithValidTokenIdAndNoPermissionShouldReturnPermissionFalseAndStatusCode403()
     {
         $this->permissionEvaluatorMock->method('hasPermission')->willReturn(false);
 
@@ -56,7 +56,7 @@ class PermissionHandlerV2Test extends TestCase
         $data = json_decode($response->getContent(), true);
 
         $this->assertFalse($data['permission']);
-        $this->assertEquals(400, $response->getCode(), 'Response code should be 401');
+        $this->assertEquals(403, $response->getCode());
     }
 
     public function testAccessWithValidTokenIdAndValidPermissionShouldReturnPermissionTrueAndStatueCode200()
@@ -73,6 +73,6 @@ class PermissionHandlerV2Test extends TestCase
 
         $this->assertTrue($data['permission']);
         $this->assertArrayNotHasKey('error', $data);
-        $this->assertEquals(200, $response->getCode(), 'Response code should be 200');
+        $this->assertEquals(200, $response->getCode());
     }
 }
