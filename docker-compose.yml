@@ -1,0 +1,7 @@
+services:
+  php:
+    image: php-ymmd
+    ports:
+      - "1337:1337"  # Expose the port 1337 for browser; (alternatively update the src/config.json for local debugging)
+    volumes:
+      - .:/var/www/project

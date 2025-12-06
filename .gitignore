@@ -1,0 +1,31 @@
+# PhpStorm / IntelliJ IDEA project files
+.idea/
+*.iml
+
+# Composer dependencies
+/vendor/
+
+# PHPUnit cache & result files
+.phpunit.result.cache
+
+# Coverage reports
+coverage/
+clover.xml
+phpunit.xml.cache
+
+# Build / artifact directories (if generated)
+build/
+dist/
+tmp/
+.cache/
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Docker-related artifacts (optional)
+# docker-compose.override.yml
+# *.pid
