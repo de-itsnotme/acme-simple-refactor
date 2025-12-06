@@ -69,7 +69,7 @@ class PermissionHandlerV2 implements HandlerInterface
         return new JSONResponse(
             [
                 'permission' => false,
-                'error' => 'Permission is not allowed.' . microtime(),
+                'error' => 'Permission is not allowed.',
             ],
             400
         );

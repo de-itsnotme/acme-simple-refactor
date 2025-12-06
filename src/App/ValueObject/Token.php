@@ -17,7 +17,7 @@ class Token
         }
 
         if (!preg_match('/^[a-zA-Z0-9]+$/', $tokenId)) {
-            throw new InvalidArgumentException('String must contain only letters (A–Z, a–z).');
+            throw new InvalidArgumentException('String must contain only letters and numbers (A–Z, a–z, 0-9).');
         }
 
 
